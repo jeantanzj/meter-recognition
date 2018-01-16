@@ -13,9 +13,11 @@ IMAGE_SIZE = 28
 # Load the dataset
 # dataset = datasets.fetch_mldata("MNIST Original")
 #outputFile='digits_cls_mnist.pkl'
-outputFile='"digits_cls.pkl'
-imagesFile = 'generateYourOwnData/train-images-idx3-ubyte.gz'
-labelsFile = 'generateYourOwnData/train-labels-idx1-ubyte.gz'
+outputFile='digits_cls_svhn_nobw.pkl'
+total = 73228
+limit = 10000
+imagesFile = 'generateYourOwnData/train-nobw-images-idx3-ubyte-'+str(total)+'.gz'
+labelsFile = 'generateYourOwnData/train-nobw-labels-idx1-ubyte-'+str(total)+'.gz'
 
 
 def extract_data(filename, num_images):
@@ -43,21 +45,34 @@ def extract_labels(filename, num_images):
 
 
 # Extract the features and labels
-features = extract_data(imagesFile,10)
-labels = extract_labels(labelsFile,10)
+features = extract_data(imagesFile,total)
+labels = extract_labels(labelsFile,total)
+
+list_hog_fd = []
+list_labels = []
+for i in range(0,10):
+  a =  np.where(labels == i)[0]
+  size = min(len(a), limit)
+  #sizes.append(size)
+  chosen = np.random.choice(a, size=size, replace=False)
+  for j in chosen:
+    fd = hog(features[j].reshape((28, 28)), orientations=9, pixels_per_cell=(14, 14), cells_per_block=(1, 1), visualise=False)
+    list_hog_fd.append(fd)
+    list_labels.append(labels[j])
 #features = np.array(dataset.data, 'int16') 
 #labels = np.array(dataset.target, 'int')
 # Extract the hog features
-list_hog_fd = []
-for feature in features:
-    fd = hog(feature.reshape((28, 28)), orientations=9, pixels_per_cell=(14, 14), cells_per_block=(1, 1), visualise=False)
-    list_hog_fd.append(fd)
+
+# for feature in features:
+#     fd = hog(feature.reshape((28, 28)), orientations=9, pixels_per_cell=(14, 14), cells_per_block=(1, 1), visualise=False)
+#     list_hog_fd.append(fd)
 hog_features = np.array(list_hog_fd, 'float64')
 
 # Normalize the features
 pp = preprocessing.StandardScaler().fit(hog_features)
 hog_features = pp.transform(hog_features)
-
+labels = list_labels
+#labels = np.repeat(np.arange(0,10), sizes, axis=0)
 print "Count of digits in dataset", Counter(labels)
 
 # Create an linear SVM object

@@ -10,7 +10,7 @@ import numpy as np
 import argparse as ap
 import sys
 
-#python performRecognition.py -i photos/gt.jpg -c digits_cls_mnist.pkl -v -r -t 45 -b 100 -o 3
+#python performRecognition.py -i photos/gt.jpg -v -r -t 45 -b 100 -o 3
 #python performRecognition.py -i photos/home.jpg -v -t 82 -b 0 -o 10
 def threshold_float(x):
     x = float(x)
@@ -20,7 +20,7 @@ def threshold_float(x):
 
 # Get the path of the training set
 parser = ap.ArgumentParser()
-parser.add_argument("-c", "--classiferPath", help="Path to Classifier File", default="digits_cls_mnist.pkl")
+parser.add_argument("-c", "--classiferPath", help="Path to Classifier File", default="digits_cls_snvh_nobw.pkl")
 parser.add_argument("-i", "--image", help="Path to Image", required="True")
 parser.add_argument("-t", "--threshold", help="Threshold to remove noise (0-255)", type=threshold_float, default=0.0)
 parser.add_argument("-r", "--invert", help="Invert the threshold", action="store_true")
@@ -77,7 +77,7 @@ warped = four_point_transform(im_gray, displayCnt.reshape(4, 2))
 output = four_point_transform(im, displayCnt.reshape(4, 2))
 showImage(warped, 'warped')
 
-###### Convert the digits to white digits on black background (because mnist looks like that), and remove some noise###### 
+###### Convert the digits to white digits on black background and remove some noise###### 
 th = args["threshold"]
 mode = cv2.THRESH_BINARY_INV if args["invert"] else cv2.THRESH_BINARY
 thresh = cv2.threshold(warped, th, 255,  mode)[1]
@@ -147,21 +147,22 @@ for rect in selected:
     #showImage(output, "Output")
 
     # Make a square region around the digit
-    leng = int(rect[3] * 1.6) #tan 45 deg = height/length
-    pt1 = max( int(rect[1] + rect[3] // 2 - leng // 2),0)
-    pt2 = max( int(rect[0] + rect[2] // 2 - leng // 2) , 0)
-    roi = thresh[pt1:pt1+leng, pt2:pt2+leng]
-    showImage(roi, 'roi')
+    #leng = int(rect[3] * 1.6) #tan 45 deg = height/length
+    #pt1 = max( int(rect[1] + rect[3] // 2 - leng // 2),0)
+    #pt2 = max( int(rect[0] + rect[2] // 2 - leng // 2) , 0)
+    #roi = thresh[pt1:pt1+leng, pt2:pt2+leng]
+    #roi = warped[pt1:pt1+leng, pt2:pt2+leng]
+    roi = warped[bottom:bottom+height, left:left+length]
 
     # # Resize the image
     roi = cv2.resize(roi, (28, 28), interpolation=cv2.INTER_AREA)
-    roi = cv2.dilate(roi, (3, 3))
-
+    #roi = cv2.dilate(roi, (3, 3))
+    showImage(roi, 'roi')
     # Calculate the HOG features
     roi_hog_fd = hog(roi, orientations=9, pixels_per_cell=(14, 14), cells_per_block=(1, 1), visualise=False)
     roi_hog_fd = pp.transform(np.array([roi_hog_fd], 'float64'))
     nbr = clf.predict(roi_hog_fd)
-    
+
     predictions.append(int(nbr[0]))
 
 print("Predictions: ", predictions)
