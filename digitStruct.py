@@ -5,6 +5,7 @@
 # Read the digitStruct.mat file in this training set
 # Crop and save the pictures with the given bounding box
 ###
+
 import h5py
 import numpy as np
 import argparse as ap
@@ -189,6 +190,8 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--digitStruct", help="Path to digitStruct", required="True")
     parser.add_argument("-o", "--outFolder", help="out Folder")
     args = vars(parser.parse_args())
+    print("Args:", args)
+
     if args["outFolder"] is None:
         upperpar=os.path.abspath(os.path.join(args["digitStruct"],os.pardir))
         outFolder = os.path.join(upperpar,"data/")

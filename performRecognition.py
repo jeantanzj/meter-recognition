@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+###
+# Credits: 
+#   https://github.com/bikz05/digit-recognition
+#   https://www.pyimagesearch.com/2014/04/21/building-pokedex-python-finding-game-boy-screen-step-4-6/
+###
+
+
 # Import the modules
 import cv2
 import imutils
@@ -29,8 +36,7 @@ parser.add_argument("-o", "--tolerance", help="Tolerance of difference in length
 parser.add_argument("-d", "--mindigits", help="Minimum number of digits", type=int, default=5)
 parser.add_argument("-v", '--verbose', help="Show image at each step", action="store_true")
 args = vars(parser.parse_args())
-print("Args:")
-print(args)
+print("Args:", args)
 verbose = args["verbose"]
 
 def showImage(img, title):

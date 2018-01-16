@@ -19,9 +19,6 @@ def showImage(img, title):
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
-# Load the classifier
-clf, pp = joblib.load(args["classiferPath"])
-
 # Read the input image 
 im = cv2.imread(args["image"])
 im = imutils.resize(im, height = 300)
@@ -58,7 +55,7 @@ output = four_point_transform(im, displayCnt.reshape(4, 2))
 showImage(warped, 'warped')
 
 th = 0
-for th in range(70,85,2):
+for th in range(70,85,2): ###CHANGE THESE VALUES
     print(th)
     thresh = cv2.threshold(warped, th, 255,  cv2.THRESH_BINARY)[1]
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 5))

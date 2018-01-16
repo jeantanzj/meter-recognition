@@ -10,7 +10,6 @@ import argparse as ap
 
 # Get the path of the training set
 parser = ap.ArgumentParser()
-parser.add_argument("-c", "--classiferPath", help="Path to Classifier File", default="digits_cls.pkl")
 parser.add_argument("-i", "--image", help="Path to Image", required="True")
 args = vars(parser.parse_args())
 
@@ -19,8 +18,6 @@ def showImage(img, title):
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
-# Load the classifier
-clf, pp = joblib.load(args["classiferPath"])
 
 # Read the input image 
 im = cv2.imread(args["image"])
