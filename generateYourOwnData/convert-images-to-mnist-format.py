@@ -6,7 +6,6 @@
 import os
 from PIL import Image
 from array import *
-from random import shuffle
 import json
 import argparse as ap
 #Photos need to be 28*28
@@ -24,7 +23,13 @@ def getOutImagesName(prefix, total):
 def getOutLabelsName(prefix, total):
 	return prefix+'-labels-idx1-ubyte-'+str(total)
 
-def run(Names, bw):
+def run(args):
+	trainPrefix = args.trainPrefix if args.trainPrefix is not None else 'train'
+	Names = [[args.trainFolder, trainPrefix]]
+	if args.testFolder is not None:
+		testPrefix = args.testPrefix if args.testPrefix is not None else 'test'
+		Names.append([args.testFolder, textPrefix])
+		
 	total = 0
 	for name in Names:
 		
@@ -40,7 +45,6 @@ def run(Names, bw):
 				if filename.endswith(".png") :
 					FileList.append(os.path.join(path, filename))
 
-		#shuffle(FileList) # Usefull for further segmenting the validation set
 		errors = []
 
 		for filename in FileList:
@@ -131,10 +135,4 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print("Args:", args)
 
-    trainPrefix = args.trainPrefix if args.trainPrefix is not None else 'train'
-    Names = [[args.trainFolder, trainPrefix]]
-  	if args.testFolder is not None:
-  		testPrefix = args.testPrefix if args.testPrefix is not None else 'test'
-  		Names.append([args.testFolder, textPrefix])
-
-  	run(Names, args.bw)
+  	run(args)

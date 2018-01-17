@@ -135,7 +135,31 @@ def showImage(img, title):
     cv2.imshow(title, img)
     cv2.waitKey(0)
 
-def run(dsFileName, outFolder):
+def processArgs(args):
+    if args["outFolder"] is None:
+        upperpar=os.path.abspath(os.path.join(args["digitStruct"],os.pardir))
+        outFolder = os.path.join(upperpar,"data/")
+    else:
+        outFolder = os.path.abspath(args["outFolder"])
+    
+    try:
+        os.mkdir(outFolder)
+    except OSError as exc:
+        if exc.errno != errno.EEXIST:
+            raise
+        pass
+    for i in range(0,10):
+        try:
+            os.mkdir(os.path.join(outFolder,str(i)))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+            pass     
+
+    return args["digitStruct"], outFolder
+
+def run(args):
+    dsFileName, outFolder = processArgs(args)
     errors=[]
     #testCounter = 0
     par=os.path.abspath(os.path.join(dsFileName,os.pardir))
@@ -192,23 +216,5 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print("Args:", args)
 
-    if args["outFolder"] is None:
-        upperpar=os.path.abspath(os.path.join(args["digitStruct"],os.pardir))
-        outFolder = os.path.join(upperpar,"data/")
-    else:
-        outFolder = os.path.abspath(args["outFolder"])
     
-    try:
-        os.mkdir(outFolder)
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise
-        pass
-    for i in range(0,10):
-        try:
-            os.mkdir(os.path.join(outFolder,str(i)))
-        except OSError as exc:
-            if exc.errno != errno.EEXIST:
-                raise
-            pass        
     run(args["digitStruct"], outFolder)

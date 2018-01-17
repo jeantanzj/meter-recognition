@@ -49,16 +49,17 @@ def extract_labels(filename, num_images):
   return labels
 
 
-def run(images_file, labels_file, output_file, total, limit):
+def run(args):
+
   # Extract the features and labels
-  features = extract_data(imagesFile,total)
-  labels = extract_labels(labelsFile,total)
+  features = extract_data(args.images_file,args.num_images)
+  labels = extract_labels(args.labels_file,args.num_images)
 
   list_hog_fd = []
   list_labels = []
   for i in range(0,10):
     a =  np.where(labels == i)[0]
-    size = min(len(a), limit)
+    size = min(len(a), args.size)
     #sizes.append(size)
     chosen = np.random.choice(a, size=size, replace=False)
     for j in chosen:
@@ -88,7 +89,7 @@ def run(images_file, labels_file, output_file, total, limit):
   clf.fit(hog_features, labels)
 
   # Save the classifier
-  joblib.dump((clf, pp), outputFile, compress=3)
+  joblib.dump((clf, pp), args.output_file, compress=3)
 
 if __name__ == "__main__":
 
@@ -102,5 +103,5 @@ if __name__ == "__main__":
   print("Args:", args)
   
 
-  run(args.images_file, args.labels_file, args.output_file, args.num_images, args.size):
+  run(args)
 

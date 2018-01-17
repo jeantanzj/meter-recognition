@@ -20,7 +20,7 @@ python generateClassifier.py --images_file train-images-idx3-ubyte-73228.gz --la
 You have to tune the parameters to get reasonable predictions. You can use `vary-threshold.py` and `vary-gradients.py` to get a sense of how the values affect the picture.
 
 The hardest part is finding the correct bounding boxes. I assume that the digits in a meter will be horizontally aligned next to each other, so I look for rows of boxes (with increasing left position,  approximately same bottom position,  approximately same height,  approximately same width.)
-Set a value for the argument `-t` to keep or discard the pixels with values above this value, depending on whether you chose to set `-r` for inversion,  `-b` for the minimum area in a box, `o` for a tolerance level in height/bottom differences between boxes of different digits, and `-d` for the minimum number of digits to be found. 
+Set a value for the argument `-t` to keep or discard the pixels with values above this value, depending on whether you chose to set `-r` for inversion,  `-b` for the minimum area in a box, `-o` for a tolerance level in height/bottom differences between boxes of different digits, and `-d` for the minimum number of digits to be found. 
 
 
 ` python performRecognition.py -i photos/gt.jpg -v -r -t 45 -b 100 -o 3 `
