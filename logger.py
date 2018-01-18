@@ -2,6 +2,7 @@ import json
 from uuid import getnode
 from datetime import datetime
 import time
+import os,errno
 
 class Utils(object):
     def __init__(self):
@@ -11,12 +12,11 @@ class Utils(object):
         else:
             self.__mac = hex(mac)
 
-
     def get_timestamp(self):
         return time.time()
 
     def get_time_as_string(self):
-        return datetime.fromtimestamp(get_timestamp()).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.fromtimestamp(self.get_timestamp()).strftime('%Y-%m-%d %H:%M:%S')
 
     def get_mac(self):
         return self.__mac

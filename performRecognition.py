@@ -21,16 +21,18 @@ import sys
 
 verbose = False
 
-def showImage(img, title):
+def showImage(img, title=''):
     if verbose:
         cv2.namedWindow(title, cv2.WINDOW_NORMAL)
         cv2.imshow(title, img)
         cv2.waitKey(0)
 
 def predict(im, args):
-
-    im = imutils.resize(im, height = 300)
-
+    
+    #im = imutils.resize(im, height = 300)
+    h = min(300, len(im))
+    w = int(float(h)/len(im) * len(im[0]))
+    im= cv2.resize(im,(w, h))
     # Load the classifier
     clf, pp = joblib.load(args["classiferPath"])
     # Convert to grayscale and apply Gaussian filtering
