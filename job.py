@@ -32,8 +32,6 @@ class Job(object):
     def get_parameters_from_server(self):
         url = '{}/tuning/{}'.format(self.server, self.mac)
         r = requests.get(url)
-        print(r.status_code)
-        print(r.content)
         params = json.loads(r.content)
         if len(params) >0 :
             params = params[0]
@@ -177,22 +175,27 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--camera_id", type=int, default=0)
     parser.add_argument("-f", "--format", type=str, default="#####")
     parser.add_argument("-s", "--server", type=str, default="http://127.0.0.1:8050")
+    parser.add_argument("-x", "--override", help="Force use these params, not the ones from server", action="store_true")
     args = vars(parser.parse_args())
     job = Job(args)
-    params = job.get_parameters_from_server()
-    print('params',params)
-    if params:
-        for param in ['threshold','minboxarea','tolerance']:
-            if params[param] is not None:
-                job.args[param] = int(params[param])
-        for param in ['mac','format']:
-            if params[param] is not None:
-                job.args[param] = str(params[param])
-        if params['invert'] is not None:
-            job.args['invert'] = bool(params[param])
-        job.reinitArgs()
-        job.log.info({"msg": 'Using params from server', "params": job.args})
-        
+    print(args)
+    if not args['override']:
+        params = job.get_parameters_from_server()
+        print(params)
+        if params:
+            for param in ['threshold','minboxarea','tolerance']:
+                if params[param] is not None:
+                    job.args[param] = int(float(params[param]))
+            for param in ['mac','format']:
+                if params[param] is not None:
+                    job.args[param] = str(params[param])
+            if params['invert'] is not None:
+                job.args['invert'] = True if params[param] == 'True' else False
+            job.reinitArgs()
+            job.log.info({"msg": 'Using params from server', "params": job.args})
+            
+        else:
+            job.post_parameters_to_server()
     else:
         job.post_parameters_to_server()
     
