@@ -115,6 +115,7 @@ class Job(object):
         trials = 1
         cnt = 1
         while cnt <= trials:
+            cnt+=1
             im, time_taken = self.get_image()
 
             predictions, im_proc = performRecognition.predict(im, self.args)
@@ -151,7 +152,6 @@ class Job(object):
                     self.write_to_history(history)
                     break
                 except Exception as e:
-                    cnt +=1
                     print ('An error occurred??' + str(e))
                     self.log.error({ "msg": str(e), "params": {"val": val} })
                 

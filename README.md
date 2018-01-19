@@ -44,10 +44,13 @@ Set a value for the argument `-t` to keep or discard the pixels with values abov
 ![thresh](examples/thresh.png)
 ![rects](examples/rects.png)
 ![bounded](examples/bounded.png)
+
+### Regions of interest
+
 ![pred 1](examples/1.png)
 ![pred 8](examples/8.png)
-![pred 9](examples/9.png)
 ![pred 7](examples/7.png)
+![pred 9](examples/9.png)
 ![pred 2](examples/2.png)
 ![pred 7](examples/7_2.png)
 ![pred 2](examples/2_2.png)
