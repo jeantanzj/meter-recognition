@@ -131,7 +131,7 @@ def predict(im, args):
             showImage(output, "All rects")
         else:
             print("All rects:", rects)
-        return None, warped
+        return None, im
 
     #Sort by the left position
     selected = sorted(selected, key=lambda x: x[0])
@@ -163,7 +163,7 @@ def predict(im, args):
         predictions.append(int(nbr[0]))
 
     showImage(output,"Resulting Image with Rectangular ROIs")
-    return predictions, warped
+    return predictions, im
 
 def run(args):
 

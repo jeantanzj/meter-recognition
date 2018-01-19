@@ -116,11 +116,11 @@ class Job(object):
         cnt = 1
         while cnt <= trials:
             im, time_taken = self.get_image()
+
             predictions, im_proc = performRecognition.predict(im, self.args)
             filename = os.path.join(self.output_dir,str(time_taken)+'.jpg')
             item = {'time': datetime.fromtimestamp(time_taken).strftime('%Y-%m-%d %H:%M:%S'), 
                 'reading': None, 'filename': filename}
-            
             if predictions is not None:
                 val = []
                 i = 0
