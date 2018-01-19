@@ -35,3 +35,19 @@ Set a value for the argument `-t` to keep or discard the pixels with values abov
 
 ` ('Predictions: ', [2, 5, 3, 3, 1]) ` 
 
+
+## Process
+
+![gray](examples/gray.png)
+![edged](examples/edged.png)
+![warped](examples/warped.png)
+![thresh](examples/thresh.png)
+![rects](examples/rects.png)
+![bounded](examples/bounded.png)
+![pred 1](examples/1.png)
+![pred 8](examples/8.png)
+![pred 9](examples/9.png)
+![pred 7](examples/7.png)
+![pred 2](examples/2.png)
+![pred 7](examples/7_2.png)
+![pred 2](examples/2_2.png)
