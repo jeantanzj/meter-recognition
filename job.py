@@ -149,11 +149,10 @@ class Job(object):
 
                     history[cid].append(item)
                     self.write_to_history(history)
-                    cv2.imwrite(filename, im_proc)
-                    self.inform_server(item)
-                    return True
+                    break
                 except Exception as e:
                     cnt +=1
+                    print ('An error occurred??' + str(e))
                     self.log.error({ "msg": str(e), "params": {"val": val} })
                 
             else:
