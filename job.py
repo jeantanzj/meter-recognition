@@ -50,21 +50,21 @@ class Job(object):
         except:
             pass
 
-    def get_image1(self):
+    def get_image(self):
         cam = cv2.VideoCapture(self.camera_id)
         s, im = cam.read()
         if s:
-            h = min(300, len(im))
-            w = int(float(h)/len(im) * len(im[0]))
-            im= cv2.resize(im,(w, h))
+            # h = min(300, len(im))
+            # w = int(float(h)/len(im) * len(im[0]))
+            # im= cv2.resize(im,(w, h))
             return im, self.log.get_timestamp()
         return None, self.log.get_timestamp()
 
-    def get_image(self):
-        im = cv2.imread('photos/gt.jpg')
-        h = min(300, len(im))
-        w = int(float(h)/len(im) * len(im[0]))
-        im=cv2.resize(im,(w, h))
+    def get_image1(self):
+        im = cv2.imread('photos/gt4.jpg')
+        # h = min(300, len(im))
+        # w = int(float(h)/len(im) * len(im[0]))
+        # im=cv2.resize(im,(w, h))
         return im, self.log.get_timestamp()
 
     def get_history(self):
@@ -89,6 +89,7 @@ class Job(object):
             int(self.args['invert']), self.args['mindigits'])
 
     def inform_server(self,item):
+        self.log.info(item)
         data = item
         data['mac'] = self.mac
         data['cam_id'] = self.camera_id
@@ -115,7 +116,11 @@ class Job(object):
         cnt = 1
         while cnt <= trials:
             im, time_taken = self.get_image()
-            predictions = performRecognition.predict(im, self.args)
+            predictions, im_proc = performRecognition.predict(im, self.args)
+            filename = os.path.join(self.output_dir,str(time_taken)+'.jpg')
+            item = {'time': datetime.fromtimestamp(time_taken).strftime('%Y-%m-%d %H:%M:%S'), 
+                'reading': None, 'filename': filename}
+            
             if predictions is not None:
                 val = []
                 i = 0
@@ -128,11 +133,7 @@ class Job(object):
 
                 try:
                     predictedValue = float(''.join(val))
-                    filename = os.path.join(self.output_dir,str(time_taken)+'.jpg')
-                    cv2.imwrite(filename, im)
-                    item = {'time': datetime.fromtimestamp(time_taken).strftime('%Y-%m-%d %H:%M:%S'), 
-                        'reading': predictedValue, 'filename': filename}
-                    self.log.info(item)
+                    item['reading'] = predictedValue
                     history = self.get_history()
                     cid = str(self.camera_id)
 
@@ -148,16 +149,20 @@ class Job(object):
 
                     history[cid].append(item)
                     self.write_to_history(history)
+                    cv2.imwrite(filename, im_proc)
                     self.inform_server(item)
                     return True
                 except Exception as e:
                     cnt +=1
                     self.log.error({ "msg": str(e), "params": {"val": val} })
+                
             else:
                 self.log.info({"msg": "Failed to get reading from image. Trying again. ({}/{})".format(cnt, trials)})
                 cnt += 1
                 time.sleep(2)
 
+        cv2.imwrite(filename, im_proc)
+        self.inform_server(item)
         self.log.error({"msg": 'Exceeded number of trials without successful prediction'})
         return False
     
@@ -178,10 +183,9 @@ if __name__ == "__main__":
     parser.add_argument("-x", "--override", help="Force use these params, not the ones from server", action="store_true")
     args = vars(parser.parse_args())
     job = Job(args)
-    print(args)
     if not args['override']:
         params = job.get_parameters_from_server()
-        print(params)
+        
         if params:
             for param in ['threshold','minboxarea','tolerance']:
                 if params[param] is not None:
@@ -198,5 +202,5 @@ if __name__ == "__main__":
             job.post_parameters_to_server()
     else:
         job.post_parameters_to_server()
-    
+    print(job.args)
     job.capture_and_calculate()

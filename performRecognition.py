@@ -29,10 +29,10 @@ def showImage(img, title=''):
 
 def predict(im, args):
     
-    #im = imutils.resize(im, height = 300)
-    h = min(300, len(im))
-    w = int(float(h)/len(im) * len(im[0]))
-    im= cv2.resize(im,(w, h))
+    im = imutils.resize(im, height = 300)
+    # h = min(300, len(im))
+    # w = int(float(h)/len(im) * len(im[0]))
+    # im= cv2.resize(im,(w, h))
     # Load the classifier
     clf, pp = joblib.load(args["classiferPath"])
     # Convert to grayscale and apply Gaussian filtering
@@ -56,12 +56,13 @@ def predict(im, args):
         # approximate the contour
         peri = cv2.arcLength(c, True)
         approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-     
         # if the contour has four vertices, then we have found
         # the thermostat display
         if len(approx) == 4:
             displayCnt = approx
             break
+    if displayCnt is None:
+        return None, im
     warped = four_point_transform(im_gray, displayCnt.reshape(4, 2))
     output = four_point_transform(im, displayCnt.reshape(4, 2))
     showImage(warped, 'warped')
@@ -130,7 +131,7 @@ def predict(im, args):
             showImage(output, "All rects")
         else:
             print("All rects:", rects)
-        return None
+        return None, warped
 
     #Sort by the left position
     selected = sorted(selected, key=lambda x: x[0])
@@ -162,7 +163,7 @@ def predict(im, args):
         predictions.append(int(nbr[0]))
 
     showImage(output,"Resulting Image with Rectangular ROIs")
-    return predictions
+    return predictions, warped
 
 def run(args):
 
@@ -191,5 +192,5 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     print("Args:", args)
     verbose = args["verbose"]
-    predictions = run(args)
+    predictions,im = run(args)
     print("Predictions", predictions)

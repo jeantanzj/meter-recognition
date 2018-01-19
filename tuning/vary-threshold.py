@@ -55,9 +55,9 @@ output = four_point_transform(im, displayCnt.reshape(4, 2))
 showImage(warped, 'warped')
 
 th = 0
-for th in range(70,85,2): ###CHANGE THESE VALUES
+for th in range(40,55,2): ###CHANGE THESE VALUES
     print(th)
-    thresh = cv2.threshold(warped, th, 255,  cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(warped, th, 255,  cv2.THRESH_BINARY_INV)[1]
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 5))
     thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
     showImage(thresh, 'thresh')
