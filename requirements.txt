@@ -10,7 +10,7 @@ matplotlib==2.1.1
 networkx==2.0
 numexpr==2.6.4
 numpy==1.13.3
-opencv-python==3.4.0.12
+opencv-python==4.2.0.32
 Pillow==6.2.0
 pyparsing==2.2.0
 python-dateutil==2.6.1
